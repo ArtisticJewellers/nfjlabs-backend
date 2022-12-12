@@ -62,7 +62,7 @@ router.post("/link-wallet", async (req, res) => {
     const user = await User.findById(req.body.userId)
         .catch((err) => {
             return res.send(err)
-        });
+        }); 
     
     if(user){
         if(existingWallet.length === 0){
