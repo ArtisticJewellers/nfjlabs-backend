@@ -1,0 +1,31 @@
+{
+  "name": "graphql-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "dev": "nodemon server.js"
+  },  "dependencies": {
+    "@thirdweb-dev/sdk": "^3.1.2",
+    "@thirdweb-dev/storage": "^1.0.4",
+    "apollo-server": "^3.10.2",
+    "apollo-server-express": "^3.10.2",
+    "body-parser": "^1.20.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.2",
+    "ethers": "^5.7.1",
+    "express": "^4.18.1",
+    "express-graphql": "^0.12.0",
+    "graphql": "^15.8.0",
+    "graphql-tools": "^8.3.6",
+    "graphql-type-json": "^0.3.2",
+    "mongoose": "^6.6.1",
+    "web3": "^1.8.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.20"
+  },
+  "type": "module",
+  "author": "",
+  "license": "ISC"
+}
