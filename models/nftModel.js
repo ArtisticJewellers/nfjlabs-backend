@@ -67,6 +67,11 @@ const nftSchema = mongoose.Schema(
         ref: "Transaction",
       },
     ],
+    tags: [
+      {
+        type: String,
+      },
+    ],
   },
   {
     timestamps: true,

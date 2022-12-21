@@ -21,6 +21,7 @@ export const nftTypeDefs = gql`
     isListed: Boolean
     price: Float
     ownerUserId: [User]
+    tags: [String]
   }
   type AllNft {
     _id: ID
@@ -92,6 +93,7 @@ export const nftTypeDefs = gql`
       creatorAddress: String
       contractAddress: String
       category: String
+      tags: [String]
     ): Nft
     nftUpdate(price: Float, nftId: String, isMarketPlace: Boolean): Nft
     nftListed(nftId: String, isListed: Boolean): Nft
@@ -203,10 +205,10 @@ export const nftResolvers = {
       return nfts;
     },
   },
+
   Mutation: {
     createNft: async (root, args) => {
       let nft = new NftModel(args);
-
       const wallet = await walletModel.findOne({
         address: args.ownerAddress,
       });
