@@ -22,6 +22,7 @@ export const nftTypeDefs = gql`
     price: Float
     ownerUserId: [User]
     tags: [String]
+    unlockableContent: String
   }
   type AllNft {
     _id: ID
@@ -65,6 +66,8 @@ export const nftTypeDefs = gql`
     isListed: Boolean
     price: Float
     user: NftUser
+    tags: [String]
+    unlockableContent: String
   }
 
   type Query {
@@ -94,6 +97,7 @@ export const nftTypeDefs = gql`
       contractAddress: String
       category: String
       tags: [String]
+      unlockableContent: String
     ): Nft
     nftUpdate(price: Float, nftId: String, isMarketPlace: Boolean): Nft
     nftListed(nftId: String, isListed: Boolean): Nft

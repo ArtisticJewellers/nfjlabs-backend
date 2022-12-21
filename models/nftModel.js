@@ -72,6 +72,9 @@ const nftSchema = mongoose.Schema(
         type: String,
       },
     ],
+    unlockableContent: {
+      type: String,
+    },
   },
   {
     timestamps: true,
