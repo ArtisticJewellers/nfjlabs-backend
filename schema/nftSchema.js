@@ -11,6 +11,7 @@ export const nftTypeDefs = gql`
     ipfsUrl: String
     imageUrl: String
     category: String
+    subcategory: String
     chainId: Int
     network: String
     ownerAddress: String
@@ -31,6 +32,7 @@ export const nftTypeDefs = gql`
     ipfsUrl: String
     imageUrl: String
     category: String
+    subcategory: String
     chainId: Int
     network: String
     ownerAddress: String
@@ -40,6 +42,7 @@ export const nftTypeDefs = gql`
     isApproved: Boolean
     isListed: Boolean
     price: Float
+    tags: [String]
     ownerUserId: User
   }
   type NftUser {
@@ -56,6 +59,7 @@ export const nftTypeDefs = gql`
     ipfsUrl: String
     imageUrl: String
     category: String
+    subcategory: String
     chainId: Int
     network: String
     ownerAddress: String
@@ -77,6 +81,7 @@ export const nftTypeDefs = gql`
       price_max: Float
       network: String
       category: String
+      subcategory: String
       isListed: Boolean
     ): [Nft]
     getNFTObjectId(tokenId: Int, network: String): Nft
@@ -96,6 +101,7 @@ export const nftTypeDefs = gql`
       creatorAddress: String
       contractAddress: String
       category: String
+      subcategory: String
       tags: [String]
       unlockableContent: String
     ): Nft
@@ -121,6 +127,7 @@ export const nftResolvers = {
 
       args.network !== "" ? (filters.network = args.network) : null;
       args.category !== "" ? (filters.category = args.category) : null;
+      args.subcategory !== "" ? (filters.subcategory = args.subcategory) : null;
       args.isListed
         ? (filters.isListed = args.isListed)
         : (filters.isListed = args.isListed);

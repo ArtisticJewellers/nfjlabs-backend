@@ -49,6 +49,10 @@ const nftSchema = mongoose.Schema(
       type: String,
       require: true,
     },
+    subcategory: {
+      type: String,
+      require: true,
+    },
     ownerUserId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
