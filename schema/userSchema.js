@@ -1,9 +1,21 @@
 import UserModel from "../models/userModel.js";
 import WalletModel from "../models/walletModel.js";
+import kycModel from "../models/kycModel.js";
 import { gql } from "apollo-server-express";
 import { GraphQLError } from "graphql";
 
 export const userTypeDefs = gql`
+  type Kyc {
+    wallet: String
+    fname: String
+    lname: String
+    dob: String
+    email: String
+    phone: String
+    address: String
+    country: String
+    identity: String
+  }
   type Nft {
     _id: ID
     name: String
@@ -36,6 +48,7 @@ export const userTypeDefs = gql`
     following_list: [User]
     follower_list: [User]
     nfts: [Nft]
+    kyc: [Kyc]
   }
 
   type Wallet {
@@ -55,6 +68,17 @@ export const userTypeDefs = gql`
   }
 
   type Mutation {
+    kyc(
+      wallet: String
+      fname: String
+      lname: String
+      dob: String
+      email: String
+      phone: String
+      address: String
+      country: String
+      identity: String
+    ): Kyc
     signUp(
       walletAddress: String
       lastname: String
@@ -130,6 +154,15 @@ export const userResolvers = {
   },
 
   Mutation: {
+    kyc: async (root, args) => {
+      let wallet = await UserModel.findOne(args.wallets);
+      if (!wallet) {
+        throw new GraphQLError("Cannot find User");
+      }
+
+      const kyc = new kycModel(args);
+      return kyc;
+    },
     signUp: async (root, args) => {
       const user = new UserModel(args);
       const existingWallet = await WalletModel.findOne({
@@ -239,6 +272,7 @@ export const userResolvers = {
         return user;
       }
     },
+
     verifyUser: async (root, args) => {
       const user = await UserModel.findByIdAndUpdate(
         args.userId,

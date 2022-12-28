@@ -69,6 +69,10 @@ const userSchema = mongoose.Schema({
       ref: "Nft",
     },
   ],
+  kyc: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Kyc",
+  },
 });
 
 export default mongoose.model("User", userSchema);
