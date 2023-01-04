@@ -155,13 +155,13 @@ export const userResolvers = {
 
   Mutation: {
     kyc: async (root, args) => {
-      let wallet = await UserModel.findOne(args.wallets);
-      if (!wallet) {
-        throw new GraphQLError("Cannot find User");
-      }
+      // let wallet = await UserModel.findOne(args.wallets);
+      // if (!wallet) {
+      //   throw new GraphQLError("Cannot find User");
+      // }
 
-      const kyc = new kycModel(args);
-      return kyc;
+      // const kyc = new kycModel(args);
+      return args.wallet;
     },
     signUp: async (root, args) => {
       const user = new UserModel(args);

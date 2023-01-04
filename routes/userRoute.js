@@ -126,7 +126,6 @@ router.get("/kyc/:wallet", async (req, res) => {
   console.log({ wallet });
   console.log({ user });
   if (!user) return res.status(404).send({ error: "Cannot Find The User" });
-
   res.send(user);
 });
 

@@ -111,6 +111,7 @@ export const nftTypeDefs = gql`
     nftOwnerUpdate(ownerAddress: String, nftId: String): Nft
   }
 `;
+
 export const nftResolvers = {
   Query: {
     nfts: async () => {
