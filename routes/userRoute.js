@@ -2,7 +2,6 @@ import express from "express";
 const router = express();
 
 import User from "../models/userModel.js";
-import Kyc from "../models/kycModel.js";
 import Wallet from "../models/walletModel.js";
 
 router.post("/check-wallet", async (req, res) => {
@@ -87,46 +86,6 @@ router.post("/link-wallet", async (req, res) => {
   } else {
     return res.send("User does not exist");
   }
-});
-
-router.post("/kyc", async (req, res) => {
-  const {
-    userId,
-    fname,
-    lname,
-    dob,
-    email,
-    phone,
-    address,
-    country,
-    identity,
-  } = req.body;
-
-  let user = await User.findById(userId);
-  if (!user) return res.status(404).json({ error: "no user found" });
-  let kyc = await Kyc.create({
-    userId,
-    fname,
-    lname,
-    dob,
-    email,
-    phone,
-    address,
-    country,
-    identity,
-  });
-
-  res.send(kyc);
-});
-
-router.get("/kyc/:wallet", async (req, res) => {
-  const { wallet } = req.params;
-
-  let user = await User.findOne({ wallet });
-  console.log({ wallet });
-  console.log({ user });
-  if (!user) return res.status(404).send({ error: "Cannot Find The User" });
-  res.send(user);
 });
 
 export default router;

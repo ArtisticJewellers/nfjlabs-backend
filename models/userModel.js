@@ -73,6 +73,12 @@ const userSchema = mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "Kyc",
   },
+  collections: [
+    {
+      type: mongoose.Types.ObjectId,
+      ref: "Collections",
+    },
+  ],
 });
 
 export default mongoose.model("User", userSchema);

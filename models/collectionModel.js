@@ -1,35 +1,30 @@
-import mongoose from "mongoose"
+import mongoose from "mongoose";
 
 const collectionSchema = mongoose.Schema({
   collectionName: {
     type: String,
-    required: true
+    required: true,
   },
-  collectionAddress: {
-    type: String,
-    required: true
-  },
+  collectionDesc: String,
   bannerImageUrl: {
     type: String,
   },
   avatarUrl: {
     type: String,
-    required: true
   },
   chain: {
     type: String,
-    required: true
   },
   nfts: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Nft"
-    }
+      ref: "Nft",
+    },
   ],
   user: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "User"
-  }
-})
+    ref: "User",
+  },
+});
 
-export default mongoose.model("Collections", collectionSchema)
+export default mongoose.model("Collections", collectionSchema);

@@ -1,7 +1,10 @@
 import mongoose from "mongoose";
 
 const kycSchema = mongoose.Schema({
-  wallet: String,
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+  },
   isApproved: {
     type: Boolean,
     default: false,

@@ -1,21 +1,10 @@
 import UserModel from "../models/userModel.js";
 import WalletModel from "../models/walletModel.js";
-import kycModel from "../models/kycModel.js";
 import { gql } from "apollo-server-express";
 import { GraphQLError } from "graphql";
+import collectionModel from "../models/collectionModel.js";
 
 export const userTypeDefs = gql`
-  type Kyc {
-    wallet: String
-    fname: String
-    lname: String
-    dob: String
-    email: String
-    phone: String
-    address: String
-    country: String
-    identity: String
-  }
   type Nft {
     _id: ID
     name: String
@@ -31,6 +20,7 @@ export const userTypeDefs = gql`
     isApproved: Boolean
     price: Float
   }
+
   type User {
     _id: ID
     displayName: String
@@ -48,7 +38,20 @@ export const userTypeDefs = gql`
     following_list: [User]
     follower_list: [User]
     nfts: [Nft]
-    kyc: [Kyc]
+    kyc: Kyc
+    collections: [Collections]
+  }
+
+  type Collections {
+    _id: ID
+    collectionName: String
+    collectionAddress: String
+    collectionDesc: String
+    bannerImageUrl: String
+    avatarImage: String
+    chain: String
+    nfts: [Nft]
+    user: User
   }
 
   type Wallet {
@@ -65,20 +68,10 @@ export const userTypeDefs = gql`
     wallet(address: String): Wallet
     walletId(walletId: String): Wallet
     signIn(walletAddress: String): Wallet
+    getAllCollections: Collections
   }
 
   type Mutation {
-    kyc(
-      wallet: String
-      fname: String
-      lname: String
-      dob: String
-      email: String
-      phone: String
-      address: String
-      country: String
-      identity: String
-    ): Kyc
     signUp(
       walletAddress: String
       lastname: String
@@ -92,6 +85,7 @@ export const userTypeDefs = gql`
       facebookUrl: String
       websiteUrl: String
     ): User
+
     linkWallet(walletAddress: String, userId: String): Wallet
     followUser(followId: String, userId: String): User
     updateUser(
@@ -108,13 +102,33 @@ export const userTypeDefs = gql`
       websiteUrl: String
     ): User
     verifyUser(userId: String, isVerified: Boolean): User
+    createCollection(
+      username: String
+      collectionName: String
+      collectionDesc: String
+      collectionAddress: String
+      bannerImageUrl: String
+      avatarUrl: String
+      chain: String
+      nfts: [String]
+    ): User
+    getCollectionsById(username: String): User
+    deleteAllCollections: Collections
+    removeCollection(collectionId: String): Collections
   }
 `;
 
 export const userResolvers = {
   Query: {
+    getAllCollections: async (parent, args) => {
+      let collections = await collectionModel.find();
+      return collections;
+    },
     users: async () => {
-      const data = await UserModel.find().populate("wallets");
+      const data = await UserModel.find()
+        .populate("wallets")
+        .populate("collections")
+        .populate("nfts");
       return data;
     },
 
@@ -154,14 +168,60 @@ export const userResolvers = {
   },
 
   Mutation: {
-    kyc: async (root, args) => {
-      // let wallet = await UserModel.findOne(args.wallets);
-      // if (!wallet) {
-      //   throw new GraphQLError("Cannot find User");
-      // }
+    getCollectionsById: async (parent, args) => {
+      let user = await UserModel.findOne({ username: args.username }).populate(
+        "collections"
+      );
+      if (!user) throw new GraphQLError("Cannot find this user");
+      console.log({ collectionsUser: user.collections });
+      return user;
+    },
+    deleteAllCollections: async (parent, args) => {
+      await collectionModel.collection.drop();
+      let collections = await collectionModel.find();
+      console.log({ collections });
+      return collectionModel;
+    },
 
-      // const kyc = new kycModel(args);
-      return args.wallet;
+    removeCollection: async (parent, args) => {
+      let collection = await collectionModel.findById(args.collectionId);
+      if (!collection) throw new GraphQLError("Cannot Find This Collection");
+      let deletedCollection = await collection.deleteOne();
+      return deletedCollection;
+    },
+
+    createCollection: async (parent, args) => {
+      let user = await UserModel.findOne({ username: args.username })
+        .populate("collections")
+        .populate("nfts");
+      if (!user) throw new GraphQLError("Cannot Find User");
+      const {
+        collectionName,
+        collectionDesc,
+        collectionAddress,
+        bannerImageUrl,
+        avatarUrl,
+        chain,
+        nfts,
+      } = args;
+
+      let newCollection = await collectionModel.create({
+        user,
+        collectionName,
+        collectionDesc,
+        collectionAddress,
+        bannerImageUrl,
+        avatarUrl,
+        chain,
+        nfts,
+      });
+
+      console.log({ newCollection });
+
+      await user.update({ $push: { collections: newCollection } });
+      // .populate({collections});
+      console.log({ user });
+      return user;
     },
     signUp: async (root, args) => {
       const user = new UserModel(args);
