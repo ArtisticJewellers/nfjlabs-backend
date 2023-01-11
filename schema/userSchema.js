@@ -68,7 +68,7 @@ export const userTypeDefs = gql`
     wallet(address: String): Wallet
     walletId(walletId: String): Wallet
     signIn(walletAddress: String): Wallet
-    getAllCollections: Collections
+    getAllCollections: [Collections]
   }
 
   type Mutation {
@@ -115,6 +115,7 @@ export const userTypeDefs = gql`
     getCollectionsById(username: String): User
     deleteAllCollections: Collections
     removeCollection(collectionId: String): Collections
+    getIndividualCollection(collectionId: String): Collections
   }
 `;
 
@@ -168,6 +169,11 @@ export const userResolvers = {
   },
 
   Mutation: {
+    getIndividualCollection: async (parent, args) => {
+      let collection = await collectionModel.findById(args.collectionId);
+      if (!collection) throw new GraphQLError("Cannot find this Colelction");
+      return collection;
+    },
     getCollectionsById: async (parent, args) => {
       let user = await UserModel.findOne({ username: args.username }).populate(
         "collections"
