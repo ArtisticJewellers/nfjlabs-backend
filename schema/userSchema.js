@@ -116,6 +116,11 @@ export const userTypeDefs = gql`
     deleteAllCollections: Collections
     removeCollection(collectionId: String): Collections
     getIndividualCollection(collectionId: String): Collections
+    addNFToCollection(
+      username: String
+      collectionId: String
+      nftId: String
+    ): Nft
   }
 `;
 
@@ -169,8 +174,23 @@ export const userResolvers = {
   },
 
   Mutation: {
-    getIndividualCollection: async (parent, args) => {
+    addNFToCollection: async (parent, args) => {
+      let user = await UserModel.findOne({ username: args.username })
+        .populate("collections")
+        .populate("nfts");
+      if (!user) throw new GraphQLError("Cannot Find This User");
       let collection = await collectionModel.findById(args.collectionId);
+      // collection.nfts.push(args.nftId);
+      if (!collection.nfts.includes(args.nftId)) {
+        await collection.update({ $push: { nfts: args.nftId } });
+      }
+      console.log(user);
+      return user;
+    },
+    getIndividualCollection: async (parent, args) => {
+      let collection = await collectionModel
+        .findById(args.collectionId)
+        .populate("nfts");
       if (!collection) throw new GraphQLError("Cannot find this Colelction");
       return collection;
     },
@@ -195,7 +215,6 @@ export const userResolvers = {
       let deletedCollection = await collection.deleteOne();
       return deletedCollection;
     },
-
     createCollection: async (parent, args) => {
       let user = await UserModel.findOne({ username: args.username })
         .populate("collections")
