@@ -118,7 +118,6 @@ export const nftResolvers = {
       const data = await NftModel.find().populate("ownerUserId");
       return data;
     },
-
     filterNfts: async (root, args) => {
       const filters = {};
 
@@ -180,6 +179,7 @@ export const nftResolvers = {
       });
       return nfts;
     },
+    
     getNftDetails: async (root, args) => {
       const nfts = await NftModel.findOne({
         contractAddress: args.contractAddress,

@@ -121,6 +121,7 @@ export const userTypeDefs = gql`
       collectionId: String
       nftId: String
     ): Nft
+    changeIsVerified(userId: String): User
   }
 `;
 
@@ -134,37 +135,32 @@ export const userResolvers = {
       const data = await UserModel.find()
         .populate("wallets")
         .populate("collections")
-        .populate("nfts");
+        .populate("nfts")
+        .populate("kyc");
       return data;
     },
-
     user: async (root, args) => {
-      //const data = await WalletModel.findOne({wallets: {$in: [args.walletAddress]}})
       const data = await WalletModel.findOne({
         address: args.walletAddress,
       }).populate("user");
 
-      console.log(data.user._id);
-      const userinfo = await UserModel.findById(data.user._id).populate("nfts");
-      console.log(userinfo);
+      const userinfo = await UserModel.findById(data.user._id)
+        .populate("nfts")
+        .populate("kyc");
       return userinfo;
     },
-
     wallets: async () => {
       const data = await WalletModel.find();
       return data;
     },
-
     wallet: async (root, args) => {
       const data = await WalletModel.findOne({ address: args.address });
       return data;
     },
-
     walletId: async (root, args) => {
       const data = await WalletModel.findById({ _id: args.walletId });
       return data;
     },
-
     signIn: async (root, args) => {
       const data = await WalletModel.findOne({
         address: args.walletAddress,
@@ -208,7 +204,6 @@ export const userResolvers = {
       console.log({ collections });
       return collectionModel;
     },
-
     removeCollection: async (parent, args) => {
       let collection = await collectionModel.findById(args.collectionId);
       if (!collection) throw new GraphQLError("Cannot Find This Collection");

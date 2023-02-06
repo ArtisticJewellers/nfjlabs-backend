@@ -5,9 +5,10 @@ const kycSchema = mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
   },
+  userWallet: String,
   isApproved: {
     type: Boolean,
-    default: false,
+    default: true,
   },
   fname: String,
   lname: String,
