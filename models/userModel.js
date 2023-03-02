@@ -73,6 +73,10 @@ const userSchema = mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "Kyc",
   },
+  isKycApproved: {
+    type: Boolean,
+    default: false,
+  },
   collections: [
     {
       type: mongoose.Types.ObjectId,

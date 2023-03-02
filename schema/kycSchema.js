@@ -21,13 +21,12 @@ export const kycTypeDefs = gql`
 
   # Queries
   type Query {
-    getKycbyUserId(userId: String): Kyc
-
     getAllKyc: [Kyc!]!
   }
 
   # Mutations
   type Mutation {
+    approveUserKyc(userId: String): User
     getKycByWalletId(walletId: String): Kyc
     deleteKycById(userId: String): Kyc
     deleteAllKyc: [Kyc]
@@ -52,11 +51,6 @@ export const kycResolvers = {
       let kycs = await KycModel.find();
       return kycs;
     },
-    getKycbyUserId: async (parent, args) => {
-      let kyc = await KycModel.findOne({ user: args.userId });
-      if (!kyc) throw new GraphQLError("Kyc is not done");
-      return kyc;
-    },
   },
 
   Mutation: {
@@ -64,6 +58,34 @@ export const kycResolvers = {
       let kyc = await KycModel.findOne({ userWallet: args.walletId });
       if (!kyc) throw new GraphQLError("Kyc is not done");
       return kyc;
+    },
+    approveUserKyc: async (parent, args) => {
+      const { userId } = args;
+      let user = await User.findById(userId);
+      console.log(user.isKycApproved);
+      if (!user) throw GraphQLError("Cannot Find The User");
+      if (user.isKycApproved) {
+        await User.findByIdAndUpdate(userId, {
+          $set: { isKycApproved: false },
+        });
+      } else {
+        await User.findByIdAndUpdate(userId, { $set: { isKycApproved: true } });
+      }
+
+      return user;
+      // let kyc = await KycModel.findOne({ userWallet: args.walletId });
+      // if (kyc.isApproved) {
+      //   await KycModel.findOneAndUpdate({
+      //     user: args.userId,
+      //     isApproved: false,
+      //   });
+      // } else {
+      //   await KycModel.findOneAndUpdate({
+      //     user: args.userId,
+      //     isApproved: true,
+      //   });
+      // }
+      // return kyc;
     },
     async deleteAllKyc() {
       let kycs = await KycModel.deleteMany();

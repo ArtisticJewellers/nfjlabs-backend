@@ -39,6 +39,7 @@ export const userTypeDefs = gql`
     follower_list: [User]
     nfts: [Nft]
     kyc: Kyc
+    isKycApproved: Boolean
     collections: [Collections]
   }
 
